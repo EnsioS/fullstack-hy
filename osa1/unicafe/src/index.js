@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom'
 
 class App extends React.Component { 
   constructor(props) {
-      super(props)
-      this.state = {
+    super(props)
+    this.state = {
         hyvia: 0,
         neutraaleja: 0,
         huonoja: 0,
         keskiarvo: 0,
         positiivisia: 0.0 
-      }
+    }
   }
   
   kasvataHyvia = () => {
@@ -35,35 +35,57 @@ class App extends React.Component {
  }
 
   asetaKeskiarvo = (uusi, n) => {
-      this.setState({ keskiarvo: (n * this.state.keskiarvo + uusi)/(n + 1)})
+    this.setState({ keskiarvo: (n * this.state.keskiarvo + uusi)/(n + 1)})
   }
 
   asetaPositiivisia = (onko, n) => {
-      this.setState({ positiivisia: (n * this.state.positiivisia + onko)/(n + 1)})
+    this.setState({ positiivisia: (n * this.state.positiivisia + onko)/(n + 1)})
   }
 
   render() {
     return (
       <div>
         <h1>anna palautetta</h1>
-          <div>
-            <button onClick={this.kasvataHyvia}>hyvä</button>
-            <button onClick={this.kasvataNeutraaleja}>neutraali</button>
-            <button onClick={this.kasvataHuonoja}>huono</button>
-          </div>   
+        <div>
+            <Button 
+              handleClick={this.kasvataHyvia}
+              text="hyvä"
+            />
+            <Button 
+              handleClick={this.kasvataNeutraaleja}
+              text="neutraali"
+            />
+            <Button 
+              handleClick={this.kasvataHuonoja}
+              text="huono"
+            />
+        </div>   
         <h1>statistiikka</h1>
-          <div>
-              <p>hyvä: {this.state.hyvia}<br/> 
-                 neutraali: {this.state.neutraaleja}<br/>
-                 huono: {this.state.huonoja}<br/>
-                 keskiarvo: {this.state.keskiarvo} <br/>
-                 positiivisia: {(this.state.positiivisia * 100).toFixed(1)} %
-              </p>
-          </div>  
+        <Statistics state={this.state}/>     
       </div>
     )
   }
 }
+
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>     
+    {text}
+  </button>
+)
+
+const Statistics = ({state}) => (
+  <div>  
+    <Statistic label="hyvä" value={state.hyvia}/> 
+    <Statistic label="neutraali" value={state.neutraaleja}/>
+    <Statistic label="huono" value={state.huonoja}/>
+    <Statistic label="keskiarvo" value={state.keskiarvo}/>
+    <Statistic label="positiivisia" value={(state.positiivisia * 100).toFixed(1) + " %"}/>
+  </div>
+)
+
+const Statistic = ({ label, value }) => (
+    <p> {label}: {value} </p>
+)
 
 ReactDOM.render(
   <App />,

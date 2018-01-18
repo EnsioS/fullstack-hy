@@ -73,15 +73,24 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 
-const Statistics = ({state}) => (
-  <div>  
-    <Statistic label="hyvä" value={state.hyvia}/> 
-    <Statistic label="neutraali" value={state.neutraaleja}/>
-    <Statistic label="huono" value={state.huonoja}/>
-    <Statistic label="keskiarvo" value={state.keskiarvo}/>
-    <Statistic label="positiivisia" value={(state.positiivisia * 100).toFixed(1) + " %"}/>
-  </div>
-)
+const Statistics = ({state}) => {
+   if (state.hyvia + state.neutraaleja + state.huonoja === 0) {
+     return (
+        <div>
+           <p>yhtään palautetta ei ole annettu</p>        
+        </div>
+     )
+   }  
+   return (
+     <div>  
+       <Statistic label="hyvä" value={state.hyvia}/> 
+       <Statistic label="neutraali" value={state.neutraaleja}/>
+       <Statistic label="huono" value={state.huonoja}/>
+       <Statistic label="keskiarvo" value={state.keskiarvo}/>
+       <Statistic label="positiivisia" value={(state.positiivisia * 100).toFixed(1) + " %"}/>
+     </div>
+   )
+}
 
 const Statistic = ({ label, value }) => (
     <p> {label}: {value} </p>

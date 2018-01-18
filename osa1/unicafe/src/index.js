@@ -13,33 +13,33 @@ class App extends React.Component {
     }
   }
   
-  kasvataHyvia = () => {
-    const n = this.state.hyvia + this.state.neutraaleja + this.state.huonoja
-    this.setState({ hyvia: this.state.hyvia +1})
-    this.asetaKeskiarvo(1, n)
-    this.asetaPositiivisia(1, n)
+  kasvataArvoa = (minka) => {
+    return () => {
+        const n = this.state.hyvia + this.state.neutraaleja + this.state.huonoja
+        this.setState({ [minka]: this.state[minka] + 1})
+        this.asetaKeskiarvo(minka, n)
+        this.asetaPositiivisia(minka, n) 
+    }
   }
-
-  kasvataNeutraaleja = () => {
-    const n = this.state.hyvia + this.state.neutraaleja + this.state.huonoja  
-    this.setState({ neutraaleja: this.state.neutraaleja +1})
-    this.asetaKeskiarvo(0, n)
-    this.asetaPositiivisia(0, n)
-  }
-
-  kasvataHuonoja = () => {
-    const n = this.state.hyvia + this.state.neutraaleja + this.state.huonoja  
-    this.setState({ huonoja: this.state.huonoja +1})
-    this.asetaKeskiarvo(-1, n)
-    this.asetaPositiivisia(0, n)
- }
 
   asetaKeskiarvo = (uusi, n) => {
-    this.setState({ keskiarvo: (n * this.state.keskiarvo + uusi)/(n + 1)})
+    let a = 0
+    if (uusi === 'hyvia') {
+       a = 1
+    } else if (uusi === 'huonoja') {
+        a = -1
+    } 
+
+    this.setState({ keskiarvo: (n * this.state.keskiarvo + a)/(n + 1)})
   }
 
-  asetaPositiivisia = (onko, n) => {
-    this.setState({ positiivisia: (n * this.state.positiivisia + onko)/(n + 1)})
+  asetaPositiivisia = (uusi, n) => {
+    let a = 0
+    if (uusi === 'hyvia') {
+        a = 1
+    }
+    
+    this.setState({ positiivisia: (n * this.state.positiivisia + a)/(n + 1)})
   }
 
   render() {
@@ -48,15 +48,15 @@ class App extends React.Component {
         <h1>anna palautetta</h1>
         <div>
             <Button 
-              handleClick={this.kasvataHyvia}
+              handleClick={this.kasvataArvoa('hyvia')}
               text="hyvä"
             />
             <Button 
-              handleClick={this.kasvataNeutraaleja}
+              handleClick={this.kasvataArvoa('neutraaleja')}
               text="neutraali"
             />
             <Button 
-              handleClick={this.kasvataHuonoja}
+              handleClick={this.kasvataArvoa('huonoja')}
               text="huono"
             />
         </div>   

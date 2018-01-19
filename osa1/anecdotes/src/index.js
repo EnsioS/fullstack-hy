@@ -38,6 +38,7 @@ class App extends React.Component {
           handleClick={this.randomAnecdote(this.props.anecdotes)}
           text="next anecdote"
         />
+        <MostVotes anecdotes={this.props.anecdotes} />
       </div>
     )
   }
@@ -48,6 +49,18 @@ const Button = ({ handleClick, text }) => (
       {text}
     </button>
   )
+
+const MostVotes = ({ anecdotes }) => {
+    const mostVoted = anecdotes.reduce( 
+        (most, current) => current.votes > most.votes ? current : most, anecdotes[0] )     
+    return (
+        <div>
+          <h3>anecdote with most votes:</h3>
+          {mostVoted.text} <br/> 
+          has {mostVoted.votes} votes
+        </div>  
+    )
+}
 
 const anecdotes = [
   {

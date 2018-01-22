@@ -1,15 +1,13 @@
 import React from 'react'
+import Numerot from './components/Numerot'
+import RajaaNaytettavia from './components/RajaaNaytettavia'
+import LisaaUusi from './components/LisaaUusi'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      persons: [
-        { name: 'Arto Hellas', number: '040-123456' },
-        { name: 'Martti Tienari', number: '040-123456' },
-        { name: 'Arto Järvinen', number: '040-123456' },
-        { name: 'Lea Kutvonen', number: '040-123456' }
-      ],
+      persons: props.persons,
       newName: '',
       newNumber: '',
       filter: ''
@@ -49,60 +47,20 @@ class App extends React.Component {
     return (
       <div>
         <h1>Puhelinluettelo</h1>
-        rajaa näytettäviä 
-        <input
-          id="filter"
-          value={this.state.filter}
-          onChange={this.handleValueChange}        
+        <RajaaNaytettavia 
+          filter={this.state.filter}
+          handleValueChange={this.handleValueChange}
         />
-        <h2>Lisää uusi</h2>
-        <form onSubmit={this.addPerson}>
-          <div>
-            nimi: 
-            <input 
-              id="newName"
-              value={this.state.newName}
-              onChange={this.handleValueChange}
-            />
-          </div>
-          <div>
-            numero:
-            <input
-              id="newNumber"
-              value={this.state.newNumber}
-              onChange={this.handleValueChange}
-            />    
-          </div>
-          <div>
-            <button type="submit">lisää</button>
-          </div>
-        </form>
-        < Numerot persons={personsToShow} />
+        <LisaaUusi
+          addPerson={this.addPerson}
+          newName={this.state.newName}  
+          newNumber={this.state.newNumber}
+          handleValueChange={this.handleValueChange}
+        />
+        <Numerot persons={personsToShow} />
       </div>
     )
   }
-}
-
-const Numerot = (props) => {
-  return (
-    <div>  
-      <h2>Numerot</h2>
-      <table>
-        <tbody>    
-          {props.persons.map(person => < TableLine key={person.name} person={person} /> )}
-        </tbody> 
-      </table>
-    </div>       
-  )
-}
-
-const TableLine = (props) => {
-  return (
-    <tr key={props.person.name}>
-      <td>{props.person.name}</td>
-      <td>{props.person.number}</td>
-    </tr>
-  )
 }
 
 export default App

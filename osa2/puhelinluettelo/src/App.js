@@ -5,21 +5,22 @@ class App extends React.Component {
     super(props)
     this.state = {
       persons: [
-        { name: 'Arto Hellas' }
+        { name: 'Arto Hellas', number: '040-123456' }
       ],
-      newName: ''
+      newName: '',
+      newNumber: ''
     }
   }
 
-  addName = (event) => {
+  addPerson = (event) => {
     event.preventDefault()
     let persons = this.state.persons        
     const isNewName = !(persons.find((person) => person.name === this.state.newName))
     
-
     if (isNewName) {     
       const person = {
-        name: this.state.newName
+        name: this.state.newName,
+        number: this.state.newNumber
       }
     
       persons = persons.concat(person)  
@@ -27,25 +28,35 @@ class App extends React.Component {
 
     this.setState({
         persons: persons,
-        newName: ''
+        newName: '',
+        newNumber: ''
       })   
   }
 
-  handleNameChange = (event) => {
-    this.setState({ newName: event.target.value })    
+  handleValueChange = (event) => {
+    this.setState({ [event.target.id] : event.target.value })    
   }
 
   render() {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
-        <form onSubmit={this.addName}>
+        <form onSubmit={this.addPerson}>
           <div>
             nimi: 
             <input 
+              id="newName"
               value={this.state.newName}
-              onChange={this.handleNameChange}
+              onChange={this.handleValueChange}
             />
+          </div>
+          <div>
+            numero:
+            <input
+              id="newNumber"
+              value={this.state.newNumber}
+              onChange={this.handleValueChange}
+            />    
           </div>
           <div>
             <button type="submit">lisää</button>
@@ -61,10 +72,21 @@ const Numerot = (props) => {
   return (
     <div>  
       <h2>Numerot</h2>
-      <ul>  
-         {props.persons.map(person => <li key={person.name}>{person.name}</li> )}
-      </ul>
+      <table>
+        <tbody>    
+          {props.persons.map(person => < TableLine key={person.name} person={person} /> )}
+        </tbody> 
+      </table>
     </div>       
+  )
+}
+
+const TableLine = (props) => {
+  return (
+    <tr key={props.person.name}>
+      <td>{props.person.name}</td>
+      <td>{props.person.number}</td>
+    </tr>
   )
 }
 

@@ -34,15 +34,23 @@ class App extends React.Component {
         name: this.state.newName,
         number: this.state.newNumber
       }
-    
-      persons = persons.concat(person)  
-    }  
-
-    this.setState({
+      
+      axios
+        .post('http://localhost:3001/persons', person)
+        .then(response => {
+          this.setState({
+            persons: this.state.persons.concat(response.data),
+            newName: '',
+            newNumber: ''
+          })
+        }) 
+    } else {
+      this.setState({
         persons: persons,
         newName: '',
         newNumber: ''
       })   
+    } 
   }
 
   handleValueChange = (event) => {

@@ -47,12 +47,26 @@ class App extends React.Component {
         }) 
     } else {
       this.setState({
-        persons: persons,
         newName: '',
         newNumber: ''
       })   
     } 
   }
+
+  deletePerson = (person) => {
+    return () => {
+      if (window.confirm("poistetaanko " + person.name)) {
+        let persons = this.state.persons.filter(Person => Person.id !== person.id)
+        personService
+          .destroy(person.id)
+          .then(
+            this.setState({
+              persons: persons,
+            })
+          )
+      }
+    }
+  } 
 
   handleValueChange = (event) => {
     this.setState({ [event.target.id] : event.target.value })    
@@ -76,7 +90,10 @@ class App extends React.Component {
           newNumber={this.state.newNumber}
           handleValueChange={this.handleValueChange}
         />
-        <Numerot persons={personsToShow} />
+        <Numerot 
+          persons={personsToShow} 
+          deletePerson={this.deletePerson}
+        />
       </div>
     )
   }

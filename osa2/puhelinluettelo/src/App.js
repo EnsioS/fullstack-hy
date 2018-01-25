@@ -1,17 +1,27 @@
 import React from 'react'
+import axios from 'axios'
 import Numerot from './components/Numerot'
 import RajaaNaytettavia from './components/RajaaNaytettavia'
 import LisaaUusi from './components/LisaaUusi'
+
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      persons: props.persons,
+      persons: [],
       newName: '',
       newNumber: '',
       filter: ''
     }
+  }
+
+  componentWillMount() {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        this.setState({ persons: response.data})
+      })
   }
 
   addPerson = (event) => {

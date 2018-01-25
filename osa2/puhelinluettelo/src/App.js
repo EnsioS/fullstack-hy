@@ -1,5 +1,6 @@
 import React from 'react'
-import axios from 'axios'
+// import axios from 'axios'
+import personService from './services/persons'
 import Numerot from './components/Numerot'
 import RajaaNaytettavia from './components/RajaaNaytettavia'
 import LisaaUusi from './components/LisaaUusi'
@@ -17,10 +18,10 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
-        this.setState({ persons: response.data})
+        this.setState({ persons: response})
       })
   }
 
@@ -35,11 +36,11 @@ class App extends React.Component {
         number: this.state.newNumber
       }
       
-      axios
-        .post('http://localhost:3001/persons', person)
-        .then(response => {
+      personService
+        .create(person)
+        .then(newPerson => {
           this.setState({
-            persons: this.state.persons.concat(response.data),
+            persons: this.state.persons.concat(newPerson),
             newName: '',
             newNumber: ''
           })

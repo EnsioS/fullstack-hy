@@ -25,32 +25,48 @@ class App extends React.Component {
       })
   }
 
-  addPerson = (event) => {
+  handleFormSubmit = (event) => {
     event.preventDefault()
     let persons = this.state.persons        
-    const isNewName = !(persons.find((person) => person.name === this.state.newName))
+    const knownPerson = persons.find((person) => person.name === this.state.newName)
     
-    if (isNewName) {     
-      const person = {
-        name: this.state.newName,
-        number: this.state.newNumber
-      }
-      
-      personService
-        .create(person)
-        .then(newPerson => {
-          this.setState({
-            persons: this.state.persons.concat(newPerson),
-            newName: '',
-            newNumber: ''
-          })
-        }) 
+    const person = {
+      name: this.state.newName,
+      number: this.state.newNumber
+    }
+
+    if (knownPerson) {                 
+      this.updatePerson(knownPerson.id, person)
     } else {
-      this.setState({
-        newName: '',
-        newNumber: ''
-      })   
+      this.addPerson(person)
     } 
+  }
+  
+  updatePerson = (id, person) => {
+    if (window.confirm(person.name + " on jo luettelossa, korvataanko vanha numero uudella?")) {
+    personService
+      .update(id, person)
+      .then(knownPerson => {
+        const persons = this.state.persons.filter(n => n.id !== id)
+        this.setState({
+          persons: persons.concat(knownPerson),
+          newName: '',
+          newNumber: ''
+        })
+      })
+    }       
+  }
+
+  addPerson = (person) => {
+    personService
+      .create(person)
+      .then(newPerson => {
+        this.setState({
+          persons: this.state.persons.concat(newPerson),
+          newName: '',
+          newNumber: ''
+        })
+      }) 
   }
 
   deletePerson = (person) => {
@@ -85,7 +101,7 @@ class App extends React.Component {
           handleValueChange={this.handleValueChange}
         />
         <LisaaUusi
-          addPerson={this.addPerson}
+          handleFormSubmit={this.handleFormSubmit}
           newName={this.state.newName}  
           newNumber={this.state.newNumber}
           handleValueChange={this.handleValueChange}

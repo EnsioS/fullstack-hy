@@ -1,10 +1,10 @@
 import React from 'react'
 
-const LisaaUusi = ({ addPerson, newName, newNumber, handleValueChange }) => {
+const LisaaUusi = ({ handleFormSubmit, newName, newNumber, handleValueChange }) => {
   return (
     <div>      
-      <h2>Lisää uusi</h2>
-      <form onSubmit={addPerson}>
+      <h2>Lisää uusi/muuta olemassaolevan numeroa</h2>
+      <form onSubmit={handleFormSubmit}>
         <div>
           nimi: 
           <input 

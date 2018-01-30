@@ -1,6 +1,6 @@
 import React from 'react'
-// import axios from 'axios'
 import personService from './services/persons'
+import Notification from './components/Notification'
 import Numerot from './components/Numerot'
 import RajaaNaytettavia from './components/RajaaNaytettavia'
 import LisaaUusi from './components/LisaaUusi'
@@ -13,7 +13,8 @@ class App extends React.Component {
       persons: [],
       newName: '',
       newNumber: '',
-      filter: ''
+      filter: '',
+      notification: null
     }
   }
 
@@ -49,10 +50,14 @@ class App extends React.Component {
       .then(knownPerson => {
         const persons = this.state.persons.filter(n => n.id !== id)
         this.setState({
+          notification: `Muutettiin henkilön ${person.name} numeroksi ${person.number}`,
           persons: persons.concat(knownPerson),
           newName: '',
           newNumber: ''
         })
+        setTimeout(() => {
+          this.setState({ notification: null })
+        }, 5000)
       })
     }       
   }
@@ -62,10 +67,14 @@ class App extends React.Component {
       .create(person)
       .then(newPerson => {
         this.setState({
+          notification: `Lisättiin henkilö ${person.name} numerolla ${person.number}`,
           persons: this.state.persons.concat(newPerson),
           newName: '',
           newNumber: ''
         })
+        setTimeout(() => {
+          this.setState({ notification: null })
+        }, 5000)
       }) 
   }
 
@@ -77,9 +86,13 @@ class App extends React.Component {
           .destroy(person.id)
           .then(
             this.setState({
+              notification: `Poistettiin henkilö ${person.name} numerolla ${person.number}`,
               persons: persons,
             })
           )
+          setTimeout(() => {
+            this.setState({ notification: null })
+          }, 5000)
       }
     }
   } 
@@ -96,6 +109,9 @@ class App extends React.Component {
     return (
       <div>
         <h1>Puhelinluettelo</h1>
+        <Notification 
+          message={this.state.notification} 
+        />
         <RajaaNaytettavia 
           filter={this.state.filter}
           handleValueChange={this.handleValueChange}

@@ -1,2 +1,2 @@
 npm run build
-cp -r build ..\..\..\fullstack-hy3-backend\
+cp -r build ..\..\..\fullstack-hy3-backend\ -Force

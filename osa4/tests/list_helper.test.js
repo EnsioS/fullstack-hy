@@ -87,7 +87,7 @@ describe.skip('total likes', () => {
   })
 })
 
-describe('favorite blog', () => {
+describe.skip('favorite blog', () => {
 
   test('of empty list is null', () => {
     const result = listHelper.favoriteBlog([])
@@ -96,7 +96,7 @@ describe('favorite blog', () => {
 
   test('when list has only one blog, favorite equals that', () => {
     const result = listHelper.favoriteBlog(listWithOneBlog)
-    expect(result).toEqual(listWithOneBlog[0])
+    expect(result).toEqual(BloglistWithOneBlog[0])
   })
 
   test('of a bigger list is found right', () => {

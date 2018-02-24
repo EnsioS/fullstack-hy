@@ -131,6 +131,25 @@ describe('GET /api/blogs', () => {
     })
   })
 
+  describe('deletion of a blog', () => {
+
+    test('DELETE /api/blogs/:id succeeds with proper statuscode', async () => {
+      const blogToDelete = initialBlogs[0]
+
+      await api
+        .delete(`/api/blogs/${blogToDelete._id}`)
+        .expect(204)
+      
+      const response = await api
+        .get('/api/blogs')
+      
+      const blogsAfterOperation = response.body
+
+      expect(blogsAfterOperation).not.toContainEqual(blogToDelete)
+      expect(blogsAfterOperation.length).toBe(initialBlogs.length - 1)
+    })
+  })
+
   afterAll(() => {
     server.close()
   })

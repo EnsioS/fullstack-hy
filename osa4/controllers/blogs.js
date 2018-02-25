@@ -1,6 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 blogsRouter.get('/', async (request, response) => {
   try {
@@ -8,15 +9,29 @@ blogsRouter.get('/', async (request, response) => {
       .find({})
       .populate('user', { passwordHash: 0, blogs: 0, __v: 0})
     response.json(blogs.map(Blog.format))    
-  } catch (error) {
-    console.log(error)
+  } catch (exception) {
+    console.log(exception)
     response.status(404).end()     
   }
 })
 
-  
+const getTokenFrom = (request) => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
+  }
+  return null
+}
+
 blogsRouter.post('/', async (request, response) => {
   try {
+    const token = getTokenFrom(request)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!token || !decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+
     const body = request.body 
 
     if (body.title === undefined || body.url === undefined) {
@@ -44,10 +59,14 @@ blogsRouter.post('/', async (request, response) => {
     await user.save()
 
     response.status(201).json(Blog.format(savedBlog))
-  } catch (error) {
-    console.log(error)
-    response.status(404).end() 
-  }
+  } catch (exception) {
+    if (exception.name ==='JsonWebTokenError' ) {
+      response.status(401).json({ error: exception.message })
+    } else {
+      console.log(exception)
+      response.status(500).json({ error: 'something went wrong...' })
+    }
+  }  
 })
 
 blogsRouter.delete('/:id',  async (request, response) => {
@@ -55,8 +74,8 @@ blogsRouter.delete('/:id',  async (request, response) => {
     await Blog.findByIdAndRemove(request.params.id)
 
     response.status(204).end()
-  } catch (error) {
-    console.log(error)
+  } catch (exception) {
+    console.log(exception)
     response.status(400).send({ error: 'malformatted id'})
   }
 })

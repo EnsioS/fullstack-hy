@@ -1,5 +1,7 @@
 import React from 'react'
+import LoginForm from './components/LoginForm'
 import Blog from './components/Blog'
+import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -11,9 +13,13 @@ class App extends React.Component {
     this.state = {
       blogs: [],
       error: null,
+      notification: null,
       username: '',
       password: '',
-      user: null
+      user: null,
+      newTitle: '',
+      newAuthor: '',
+      newUrl: ''
     }
   }
 
@@ -26,6 +32,7 @@ class App extends React.Component {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       this.setState({user})
+      blogService.setToken(user.token)
     }
   } 
 
@@ -38,7 +45,7 @@ class App extends React.Component {
       })
 
       window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
-
+      blogService.setToken(user.token)
       this.setState({ username: '', password: '', user})
     } catch (exception) {
       this.setState({
@@ -53,6 +60,37 @@ class App extends React.Component {
   logout = () => {
     window.localStorage.removeItem('loggedNoteappUser')
     this.setState({ user: null })
+  }
+
+  addBlog = async (event) => {
+    event.preventDefault()
+    
+    const blog = {
+      title: this.state.newTitle,
+      author: this.state.newAuthor,
+      url: this.state.newUrl
+    }
+
+    try {
+      const newBlog = await blogService.create(blog)
+
+      const notification = `a new blog '${newBlog.title}' by ${newBlog.author} added`
+
+      this.setState({
+        notification: notification,
+        newTitle: '',
+        newAuthor: '',
+        newUrl: '',
+        blogs: this.state.blogs.concat(newBlog)
+      })
+
+      setTimeout(() => {
+        this.setState({ notification: null })
+      }, 5000)
+    } catch (exception) {
+      console.log(exception)
+    }
+
   }
 
   handleValueChange = (event) => {
@@ -79,13 +117,22 @@ class App extends React.Component {
 
       return (
       <div>
+        <Notification
+          message={this.state.notification}
+          error={false}
+        />
         <h2>blogs</h2>
-        
         <p>
           {this.state.user.name} logged in 
           <button onClick={this.logout}>kirjaudu ulos</button>
         </p>
-
+        <NewBlogForm
+          newTitle={this.state.newTitle}
+          newAuthor={this.state.newAuthor}
+          newUrl={this.state.newUrl}
+          addBlog={this.addBlog}
+          handleValueChange={this.handleValueChange}
+        />
         {this.state.blogs.map(blog => 
           <Blog key={blog._id} blog={blog}/>
         )}
@@ -94,33 +141,4 @@ class App extends React.Component {
   }
 }
 
-const LoginForm = ({ login, username, password, handleValueChange }) => (
-  <div>
-    <h2>Kirjaudu</h2>
-
-    <form onSubmit={login}>
-      <div>
-        käyttäjätunnus
-        <input
-          type="text"
-          name="username"
-          value={username}
-          onChange={handleValueChange}
-        />
-      </div>
-      <div>
-        salasana
-        <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={handleValueChange}
-        />
-      </div>
-      <button type="submit">kirjaudu</button>
-    </form>
-  </div>
-)
-
-
-export default App;
+export default App

@@ -2,7 +2,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import SimpleBlog from './SimpleBlog'
 
-describe.only('<SimpleBlog />', () => {
+describe('<SimpleBlog />', () => {
   it('it renders tilte, author and likes of a blog', () => {
     const blog = {
       title: 'Continous Integration',
@@ -23,7 +23,7 @@ describe.only('<SimpleBlog />', () => {
     expect(likes.text()).toContain(blog.likes) 
   })
 
-  it.only('clicking button twice calls event handler twice', () => {
+  it('clicking button twice calls event handler twice', () => {
     const blog = {
         title: 'Continous Integration',
         author: 'Martin Flower',

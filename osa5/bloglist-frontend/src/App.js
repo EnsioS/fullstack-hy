@@ -1,6 +1,7 @@
 import React from 'react'
 import LoginForm from './components/LoginForm'
 import Blog from './components/Blog'
+import Togglable from './components/Togglable'
 import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
@@ -75,6 +76,7 @@ class App extends React.Component {
       const newBlog = await blogService.create(blog)
 
       const notification = `a new blog '${newBlog.title}' by ${newBlog.author} added`
+      this.newBlogForm.toggleVisibility()
 
       this.setState({
         notification: notification,
@@ -124,15 +126,17 @@ class App extends React.Component {
         <h2>blogs</h2>
         <p>
           {this.state.user.name} logged in 
-          <button onClick={this.logout}>kirjaudu ulos</button>
+          <button onClick={this.logout}>logout</button>
         </p>
-        <NewBlogForm
-          newTitle={this.state.newTitle}
-          newAuthor={this.state.newAuthor}
-          newUrl={this.state.newUrl}
-          addBlog={this.addBlog}
-          handleValueChange={this.handleValueChange}
-        />
+        <Togglable buttonLabel="new blog" ref={component => this.newBlogForm = component}>
+          <NewBlogForm
+            newTitle={this.state.newTitle}
+            newAuthor={this.state.newAuthor}
+            newUrl={this.state.newUrl}
+            addBlog={this.addBlog}
+            handleValueChange={this.handleValueChange}
+          />
+        </Togglable>
         {this.state.blogs.map(blog => 
           <Blog key={blog._id} blog={blog}/>
         )}

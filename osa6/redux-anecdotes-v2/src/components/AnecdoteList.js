@@ -1,21 +1,17 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import Filter from './Filter'
 import { voteAnecdote } from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
 class AnecdoteList extends React.Component {
   render() {
-    const anecdotes = this.context.store.getState().anecdotes
-    const filter = this.context.store.getState().filter
-    const filteredAnecdotes = anecdotes.filter(anectode => anectode.content.includes(filter))
-
     const vote = (anecdote) => () => {
       return (
-        this.context.store.dispatch(voteAnecdote(anecdote.id)),
-        this.context.store.dispatch(setNotification(`you voted '${anecdote.content}'`)),
+        this.props.voteAnecdote(anecdote.id),
+        this.props.setNotification(`you voted '${anecdote.content}'`),
         setTimeout(() => {
-          this.context.store.dispatch(setNotification(''))  
+          this.props.setNotification('')  
         }, 5000)
       )}    
 
@@ -23,7 +19,7 @@ class AnecdoteList extends React.Component {
       <div>
         <h2>Anecdotes</h2>
         <Filter/>
-        {filteredAnecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
+        {this.props.anecdotesToShow.map(anecdote =>
           <div key={anecdote.id}>
             <div>
               {anecdote.content}
@@ -41,8 +37,18 @@ class AnecdoteList extends React.Component {
   }
 }
 
-AnecdoteList.contextTypes = {
-  store: PropTypes.object
-}
+const filteredAnecdotes = (anecdotes, filter) => {
+  return anecdotes.filter(anectode => anectode.content.includes(filter))
+} 
 
-export default AnecdoteList
+const mapStateToProps = (state) => {
+  return {
+    anecdotesToShow: filteredAnecdotes(state.anecdotes, state.filter)
+      .sort((a, b) => b.votes - a.votes)
+  }
+} 
+
+export default connect(
+  mapStateToProps,
+  { voteAnecdote, setNotification }
+)(AnecdoteList)

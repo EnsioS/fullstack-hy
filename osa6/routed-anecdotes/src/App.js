@@ -1,5 +1,6 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom'
+import Notification from './components/Notification'
 import AnecdoteList from './components/AnecdoteList'
 import CreateNew from './components/CreateNew'
 import About from './components/About'
@@ -59,17 +60,17 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="container">
         <h1>Software anecdotes</h1>
         <Router>
           <div>  
             <Menu />  
-            <div>{this.state.notification}</div>
+            <Notification message={this.state.notification} />
             <Route exact path="/" render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />     
-            <Route path="/create" render={({history}) => 
+            <Route exact path="/create" render={({history}) => 
               <CreateNew history={history} addNew={this.addNew} />} 
             />
-            <Route path="/about" render={() => <About />} />
+            <Route exact path="/about" render={() => <About />} />
 
             <Route exact path="/anecdotes/:id" render={({match}) =>
               <Anecdote anecdote={this.anecdoteById(match.params.id)} />} 
@@ -82,11 +83,29 @@ class App extends React.Component {
   }
 }
 
+const menuStyle = {
+  padding: '8px',
+  border: '2px solid',
+  borderRadius: '5px',
+  marginTop: '5px',
+  color: 'rgb(30,100,130)',
+  backgroundColor: 'rgb(30,100,130)'
+}
+
+const menuLinkStyle = {
+  color: 'white',
+}
+
+const activeStyle = {
+  backgroundColor: 'grey',
+  padding: '10px'
+}
+
 const Menu = () => (
-  <div>    
-    <Link to='/'>anecdotes</Link>&nbsp;
-    <Link to='/create'>create new</Link>&nbsp;
-    <Link to='/about'>about</Link>&nbsp;
+  <div style={menuStyle}>    
+    <NavLink to='/' activeStyle={activeStyle}><span style={menuLinkStyle}>anecdotes</span></NavLink>&nbsp;
+    <NavLink to='/create' activeStyle={activeStyle}><span style={menuLinkStyle}>create new</span></NavLink>&nbsp;&nbsp;
+    <NavLink to='/about' activeStyle={activeStyle}><span style={menuLinkStyle}>about</span></NavLink>&nbsp;
   </div>
 )
 
